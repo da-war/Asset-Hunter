@@ -1,0 +1,111 @@
+{
+  "AssetTypes": {
+    "TraditionalFinancialAssets": {
+      "Equities": [
+        "Common stocks",
+        "Preferred stocks",
+        "Dividend-paying stocks",
+        "Growth stocks"
+      ],
+      "FixedIncome": [
+        "Corporate bonds",
+        "Government bonds",
+        "Municipal bonds",
+        "Convertible bonds",
+        "Mortgage-backed securities"
+      ],
+      "CashAndCashEquivalents": [
+        "Money market instruments",
+        "Treasury bills",
+        "Commercial paper",
+        "Bank deposits"
+      ]
+    },
+    "AlternativeInvestments": {
+      "PrivateEquity": [
+        "Venture capital",
+        "Leveraged buyouts",
+        "Growth equity"
+      ],
+      "HedgeFunds": [
+        "Long/short equity strategies",
+        "Global macro strategies",
+        "Event-driven strategies",
+        "Arbitrage strategies"
+      ],
+      "RealEstate": [
+        "Real Estate Investment Trusts (REITs)",
+        "Direct property investments",
+        "Real estate funds"
+      ],
+      "Commodities": [
+        "Precious metals",
+        "Energy resources",
+        "Agricultural products"
+      ],
+      "Infrastructure": [
+        "Toll roads",
+        "Ports",
+        "Airports",
+        "Infrastructure funds"
+      ],
+      "PrivateCredit": [
+        "Direct lending",
+        "Distressed debt",
+        "Mezzanine debt"
+      ]
+    },
+    "Derivatives": [
+      "Options",
+      "Futures contracts",
+      "Swaps",
+      "Forwards",
+      "Credit default swaps"
+    ],
+    "DigitalAssets": [
+      "Cryptocurrencies",
+      "Tokenized assets",
+      "Stablecoins",
+      "Non-Fungible Tokens (NFTs)"
+    ],
+    "StructuredProducts": [
+      "Collateralized Debt Obligations (CDOs)",
+      "Asset-Backed Securities (ABS)",
+      "Structured notes",
+      "Credit-linked notes"
+    ],
+    "MutualFundsAndETFs": [
+      "Equity mutual funds",
+      "Bond mutual funds",
+      "Index funds",
+      "Exchange-Traded Funds (ETFs)"
+    ],
+    "SovereignAndInstitutionalAssets": [
+      "Sovereign wealth funds",
+      "Pension funds",
+      "Endowments",
+      "Insurance-linked securities"
+    ],
+    "ESGAndImpactInvestments": [
+      "Environmentally sustainable assets",
+      "Socially responsible investments",
+      "Green bonds",
+      "Renewable energy projects"
+    ],
+    "ManagedAccounts": [
+      "Separately Managed Accounts (SMAs)",
+      "Unified Managed Accounts (UMAs)"
+    ],
+    "CurrencyAndForex": [
+      "Foreign currencies",
+      "Currency ETFs",
+      "Forex trading strategies"
+    ],
+    "OtherInvestmentVehicles": [
+      "Unit Investment Trusts (UITs)",
+      "Closed-end funds",
+      "Limited partnerships",
+      "Master Limited Partnerships (MLPs)"
+    ]
+  }
+}

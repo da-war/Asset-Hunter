@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FinTech",
-    "slug": "FinTech",
+    "name": "Asset Hunter",
+    "slug": "Asset Hunter For Tracking the Investments",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -32,7 +32,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
