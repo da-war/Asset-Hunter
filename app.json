@@ -10,14 +10,16 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ranadawar.AssetHunterForTrackingtheInvestments"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.dawar.assethunter"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ranadawar.AssetHunterForTrackingtheInvestments"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.dawar.assethunter"
     },
     "web": {
       "bundler": "metro",

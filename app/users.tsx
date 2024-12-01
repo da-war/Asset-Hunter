@@ -8,7 +8,9 @@ const users = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View></View>
+      <View>
+        <Text>Create User</Text>
+      </View>
     </SafeAreaView>
   );
 };
