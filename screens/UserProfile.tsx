@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const NotFound = () => {
+const UserProfile = () => {
   return (
     <View>
-      <Text>+not-found</Text>
+      <Text>UserProfile</Text>
     </View>
   );
 };
 
-export default NotFound;
+export default UserProfile;
+
+const styles = StyleSheet.create({});

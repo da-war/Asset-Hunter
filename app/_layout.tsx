@@ -1,39 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Stack } from "expo-router";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { useFonts } from "expo-font";
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+const RootLayout = () => {
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    "PixelifySans-Bold": require("../assets/fonts/PixelifySans-Bold.ttf"),
+    "PixelifySans-SemiBold": require("../assets/fonts/PixelifySans-SemiBold.ttf"),
+    "PixelifySans-Medium": require("../assets/fonts/PixelifySans-Medium.ttf"),
+    "PixelifySans-Regular": require("../assets/fonts/PixelifySans-Regular.ttf"),
   });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
 
   if (!loaded) {
     return null;
   }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="users" />
+      <Stack.Screen name="adminLogin" />
+      <Stack.Screen name="manageFunds" />
+      <Stack.Screen name="createUser" />
+      <Stack.Screen name="adminDashboard" />
+      <Stack.Screen name="userProfile" />
+    </Stack>
   );
-}
+};
+
+export default RootLayout;

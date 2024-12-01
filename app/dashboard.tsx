@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const NotFound = () => {
+const dashboard = () => {
   return (
     <View>
-      <Text>+not-found</Text>
+      <Text>dashboard</Text>
     </View>
   );
 };
 
-export default NotFound;
+export default dashboard;
+
+const styles = StyleSheet.create({});

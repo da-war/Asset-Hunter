@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const NotFound = () => {
+const ManageFunds = () => {
   return (
     <View>
-      <Text>+not-found</Text>
+      <Text>ManageFunds</Text>
     </View>
   );
 };
 
-export default NotFound;
+export default ManageFunds;
+
+const styles = StyleSheet.create({});

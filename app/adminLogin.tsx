@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const NotFound = () => {
+const adminLogin = () => {
   return (
     <View>
-      <Text>+not-found</Text>
+      <Text>adminLogin</Text>
     </View>
   );
 };
 
-export default NotFound;
+export default adminLogin;
+
+const styles = StyleSheet.create({});
