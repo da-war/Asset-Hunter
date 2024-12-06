@@ -11,11 +11,10 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS, SIZES } from "@/constants/theme";
 
-import { v4 as uuidv4 } from "uuid";
-
 import firestore from "@react-native-firebase/firestore";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { randomString } from "@/utils";
 
 const createUser = () => {
   const [users, setUsers] = useState([]);
@@ -29,10 +28,9 @@ const createUser = () => {
 
   const addUser = async () => {
     setLoading(true);
-
+    console.log("hello");
     // Generate a random user ID
-    const userId = uuidv4();
-
+    const userId = randomString(20);
     // Assemble the data
     const user = {
       userId: userId,
@@ -54,6 +52,7 @@ const createUser = () => {
         console.log("good");
         Alert.alert("User Created");
         setLoading(false); // Fix here: should be false
+        router.push('/(tabs)/(users)/users')
       })
       .catch((err) => {
         console.log("not good", err);

@@ -1,68 +1,45 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "@/constants/theme";
 import { router } from "expo-router";
+import useUserStore from "@/store/userStore"; // Import the store
 
-import firestore from "@react-native-firebase/firestore";
-
-const users = () => {
+const Users = () => {
+  const { users, loading, fetchUsers } = useUserStore(); // Access the store
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState([]);
 
-  //get users from the firestore in react native functions
-
-  function onResult(QuerySnapshot: any) {
-    console.log("Got Users collection result.");
-  }
-
-  function onError(error: any) {
-    console.error(error);
-  }
-
-  // firestore().collection("Users").onSnapshot(onResult, onError);
-  const getUsers = async () => {
-    setLoading(true);
-    const users: USER[] = [];
-    await firestore()
-      .collection("users")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          users.push(doc.data() as USER);
-        });
-      });
-    console.log("users", users);
-    setLoading(false);
-  };
-
+  // Fetch users when the component mounts
   useEffect(() => {
-    getUsers();
-  }, []);
+    fetchUsers(); // This fetches the users from Firestore through the store
+  }, [fetchUsers]);
 
   return (
     <SafeAreaView style={styles.bg}>
-      <Text>users</Text>
+      <Text style={styles.heading}>Users</Text>
 
       {loading ? (
-        <Text>Loading...</Text>
+        <Text>Loading...</Text> // Show loading text while fetching
       ) : (
         <View>
-          {users.map((user: any, index: number) => (
-            <View key={index}>
-              <Text>{user.userName}</Text>
-              <Text>{user.email}</Text>
-              <Text>{user.contact}</Text>
-              <Text>{user.issuer}</Text>
-            </View>
-          ))}
+          {users.length === 0 ? (
+            <Text>No users found</Text>
+          ) : (
+            users.map((user, index) => (
+              <View key={index} style={styles.userCard}>
+                <Text>{user.userName}</Text>
+                <Text>{user.email}</Text>
+                <Text>{user.contact}</Text>
+                <Text>{user.issuer}</Text>
+              </View>
+            ))
+          )}
         </View>
       )}
 
       <Pressable
         onPress={() => {
-          router.push("/createUser");
+          router.push("/createUser"); // Navigate to create user screen
         }}
         style={styles.btn}
       >
@@ -72,12 +49,19 @@ const users = () => {
   );
 };
 
-export default users;
+export default Users;
 
 const styles = StyleSheet.create({
   bg: {
     backgroundColor: COLORS.blue,
     flex: 1,
+    padding: 20,
+  },
+  heading: {
+    fontSize: 24,
+    fontFamily: FONTS.bold,
+    color: COLORS.white,
+    marginBottom: 20,
   },
   btn: {
     alignItems: "center",
@@ -95,5 +79,16 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontFamily: FONTS.bold,
     fontSize: 20,
+  },
+  userCard: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });
