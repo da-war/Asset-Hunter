@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214327937336",
+    "project_id": "assethunter-6e7f9",
+    "storage_bucket": "assethunter-6e7f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214327937336:android:a742c5875c7e77c4ec19cd",
+        "android_client_info": {
+          "package_name": "com.dawar.assethunter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA29C5GuwQiJicr-XVYSAxRXNXTp4JMH1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

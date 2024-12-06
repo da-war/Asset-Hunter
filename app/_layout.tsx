@@ -19,12 +19,7 @@ const RootLayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="users" />
-      <Stack.Screen name="adminLogin" />
-      <Stack.Screen name="manageFunds" />
-      <Stack.Screen name="createUser" />
-      <Stack.Screen name="adminDashboard" />
-      <Stack.Screen name="userProfile" />
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 };

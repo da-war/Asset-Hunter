@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const createUser = () => {
+const profile = () => {
   return (
     <View>
-      <Text>createUser</Text>
+      <Text>profile</Text>
     </View>
   );
 };
 
-export default createUser;
+export default profile;
 
 const styles = StyleSheet.create({});
