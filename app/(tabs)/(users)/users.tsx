@@ -24,13 +24,13 @@ const users = () => {
   // firestore().collection("Users").onSnapshot(onResult, onError);
   const getUsers = async () => {
     setLoading(true);
-    const users = [];
+    const users: USER[] = [];
     await firestore()
       .collection("users")
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          users.push(doc.data());
+          users.push(doc.data() as USER);
         });
       });
     console.log("users", users);
