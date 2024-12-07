@@ -3,8 +3,13 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "@/constants/theme";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const settings = () => {
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("isAdmin");
+    router.push("/adminLogin");
+  };
   return (
     <SafeAreaView style={styles.mainContainer}>
       <Text style={styles.title}>Admin Settings</Text>
@@ -16,18 +21,15 @@ const settings = () => {
           onPress={() => router.push("/assets")}
         />
         <SettingCard
-          title="App Settings"
-          description="Manage app settings and configurations"
-        />
-        <SettingCard
-          title="Billing"
-          description="Manage billing and subscription"
-        />
-        <SettingCard
-          title="Logs"
-          description="View logs and activity history"
+          title="User Management"
+          description="Manage users and their roles"
+          onPress={() => router.push("/userManagement")}
         />
       </View>
+
+      <Pressable style={styles.btnLogout} onPress={() => handleLogout()}>
+        <Text style={styles.btnText}>Logout</Text>
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -85,5 +87,19 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.medium,
     fontSize: 16,
     textAlign: "center",
+  },
+  btnLogout: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 30,
+    marginHorizontal: 20,
+  },
+  btnText: {
+    color: COLORS.white,
+    fontFamily: FONTS.bold,
+    fontSize: 20,
   },
 });

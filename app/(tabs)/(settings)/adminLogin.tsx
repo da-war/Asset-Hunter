@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS, SIZES } from "@/constants/theme";
 import { router } from "expo-router";
@@ -16,6 +16,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const index = () => {
   const [userName, setUserName] = React.useState("");
   const [pinCode, setPinCode] = React.useState("");
+
+  useEffect(() => {
+    AsyncStorage.getItem("isAdmin").then((value) => {
+      if (value === "true") {
+        router.replace("/settings");
+      }
+    });
+  }, []);
 
   const handleLogin = async () => {
     if (userName === "" || pinCode === "") {

@@ -11,15 +11,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "@/constants/theme";
 import { useAssetStore } from "@/store/assetStore";
 import { randomString } from "@/utils";
+import { router } from "expo-router";
 
 const addNewAsset = () => {
   const [assetName, setAssetName] = useState("");
   const [totalSupply, setTotalSupply] = useState<string>("");
   const [pricePerShare, setPricePerShare] = useState<string>("");
   const [details, setDetails] = useState("");
+  const { loading, addAsset } = useAssetStore();
 
   const handleCreateAsset = () => {
-    const { loading, addAsset } = useAssetStore();
     const assetId = randomString(20);
     const asset = {
       assetId,
@@ -31,6 +32,7 @@ const addNewAsset = () => {
     };
     console.log(asset);
     addAsset(asset);
+    router.replace("/(tabs)/(settings)/assets");
   };
   return (
     <SafeAreaView style={styles.mainContainer}>

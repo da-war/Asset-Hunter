@@ -10,6 +10,7 @@ const Settinglayout = () => {
       <Stack.Screen name="settings" />
       <Stack.Screen name="assets" />
       <Stack.Screen name="addNewAsset" />
+      <Stack.Screen name="userManagement" />
     </Stack>
   );
 };
