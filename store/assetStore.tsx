@@ -9,6 +9,10 @@ interface AssetStore {
   loading: boolean;
   addAsset: (asset: Asset) => Promise<void>;
   removeAsset: (assetId: string) => Promise<void>;
+  updateAsset: (
+    assetId: string,
+    updatedFields: Partial<Asset>
+  ) => Promise<void>; // Update function
   fetchAssets: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
@@ -26,11 +30,8 @@ export const useAssetStore = create<AssetStore>()(
       addAsset: async (asset: Asset) => {
         set({ loading: true });
         try {
-          // Add asset to Firestore
           await firestore().collection("assets").doc(asset.assetId).set(asset);
           Alert.alert("Asset Created");
-
-          // Add asset to local state
           set((state) => ({
             assets: [...state.assets, asset],
             loading: false,
@@ -46,11 +47,8 @@ export const useAssetStore = create<AssetStore>()(
       removeAsset: async (assetId: string) => {
         set({ loading: true });
         try {
-          // Remove asset from Firestore
           await firestore().collection("assets").doc(assetId).delete();
           Alert.alert("Asset Deleted");
-
-          // Remove asset from local state
           set((state) => ({
             assets: state.assets.filter((asset) => asset.assetId !== assetId),
             loading: false,
@@ -58,6 +56,28 @@ export const useAssetStore = create<AssetStore>()(
         } catch (err) {
           console.error("Error deleting asset:", err);
           Alert.alert("Issue in deleting asset");
+          set({ loading: false });
+        }
+      },
+
+      // Update asset (partial or complete)
+      updateAsset: async (assetId: string, updatedFields: Partial<Asset>) => {
+        set({ loading: true });
+        try {
+          await firestore()
+            .collection("assets")
+            .doc(assetId)
+            .update(updatedFields);
+          set((state) => ({
+            assets: state.assets.map((asset) =>
+              asset.assetId === assetId ? { ...asset, ...updatedFields } : asset
+            ),
+            loading: false,
+          }));
+          Alert.alert("Asset Updated");
+        } catch (err) {
+          console.error("Error updating asset:", err);
+          Alert.alert("Issue in updating asset");
           set({ loading: false });
         }
       },
@@ -77,7 +97,7 @@ export const useAssetStore = create<AssetStore>()(
       },
     }),
     {
-      name: "asset-store", // The name of the persisted store
+      name: "asset-store",
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

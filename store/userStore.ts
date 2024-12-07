@@ -20,9 +20,12 @@ interface UserStore {
   loading: boolean;
   addUser: (user: User) => Promise<void>;
   removeUser: (userId: string) => Promise<void>;
+  updateUser: (userId: string, updatedFields: Partial<User>) => Promise<void>; // Update function
   fetchUsers: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
+
+
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -37,13 +40,8 @@ export const useUserStore = create<UserStore>()(
       addUser: async (user: User) => {
         set({ loading: true });
         try {
-          await firestore()
-            .collection('users')
-            .doc(user.userId)
-            .set(user);
+          await firestore().collection('users').doc(user.userId).set(user);
           Alert.alert('User Created');
-
-          // Add user to local state
           set((state) => ({
             users: [...state.users, user],
             loading: false,
@@ -59,11 +57,8 @@ export const useUserStore = create<UserStore>()(
       removeUser: async (userId: string) => {
         set({ loading: true });
         try {
-          // Remove user from Firestore
           await firestore().collection('users').doc(userId).delete();
           Alert.alert('User Deleted');
-
-          // Remove user from local state
           set((state) => ({
             users: state.users.filter((user) => user.userId !== userId),
             loading: false,
@@ -71,6 +66,25 @@ export const useUserStore = create<UserStore>()(
         } catch (err) {
           console.error('Error deleting user:', err);
           Alert.alert('Issue in deleting user');
+          set({ loading: false });
+        }
+      },
+
+      // Update user (partial or complete)
+      updateUser: async (userId: string, updatedFields: Partial<User>) => {
+        set({ loading: true });
+        try {
+          await firestore().collection('users').doc(userId).update(updatedFields);
+          set((state) => ({
+            users: state.users.map((user) =>
+              user.userId === userId ? { ...user, ...updatedFields } : user
+            ),
+            loading: false,
+          }));
+          Alert.alert('User Updated');
+        } catch (err) {
+          console.error('Error updating user:', err);
+          Alert.alert('Issue in updating user');
           set({ loading: false });
         }
       },
@@ -90,7 +104,7 @@ export const useUserStore = create<UserStore>()(
       },
     }),
     {
-      name: 'user-store', // The name of the persisted store
+      name: 'user-store',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
