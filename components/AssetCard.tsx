@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const manageAssets = () => {
+const AssetCard = () => {
   return (
     <View>
-      <Text>manageAssets</Text>
+      <Text>AssetCard</Text>
     </View>
   );
 };
 
-export default manageAssets;
+export default AssetCard;
 
 const styles = StyleSheet.create({});

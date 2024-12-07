@@ -5,9 +5,11 @@ import { Stack } from "expo-router";
 const Settinglayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="settings" />
-      <Stack.Screen name="manageAssets" />
       <Stack.Screen name="adminLogin" />
+      <Stack.Screen name="manageAssets" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen name="assets" />
+      <Stack.Screen name="addNewAsset" />
     </Stack>
   );
 };

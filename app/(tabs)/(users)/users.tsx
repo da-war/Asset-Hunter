@@ -1,11 +1,21 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import {
+  Image,
+  Linking,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "@/constants/theme";
 import { router } from "expo-router";
-import useUserStore from "@/store/userStore"; // Import the store
+import { useUserStore } from "@/store/userStore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const Users = () => {
+const users = () => {
   const { users, loading, fetchUsers } = useUserStore(); // Access the store
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -14,28 +24,60 @@ const Users = () => {
     fetchUsers(); // This fetches the users from Firestore through the store
   }, [fetchUsers]);
 
+  const openEmail = (email: string) => {
+    Linking.openURL(`mailto:${email}`);
+  };
   return (
     <SafeAreaView style={styles.bg}>
       <Text style={styles.heading}>Users</Text>
 
-      {loading ? (
-        <Text>Loading...</Text> // Show loading text while fetching
-      ) : (
-        <View>
-          {users.length === 0 ? (
-            <Text>No users found</Text>
-          ) : (
-            users.map((user, index) => (
-              <View key={index} style={styles.userCard}>
-                <Text>{user.userName}</Text>
-                <Text>{user.email}</Text>
-                <Text>{user.contact}</Text>
-                <Text>{user.issuer}</Text>
-              </View>
-            ))
-          )}
-        </View>
-      )}
+      <View style={styles.middleContainer}>
+        {loading ? (
+          <Text>Loading...</Text> // Show loading text while fetching
+        ) : (
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => fetchUsers()} // Fetch users when the user pulls down to refresh
+              />
+            }
+          >
+            {users.length === 0 ? (
+              <Text>No users found</Text>
+            ) : (
+              users.map((user, index) => (
+                <Pressable key={index} style={styles.userCard}>
+                  <Image
+                    source={require("@/assets/icons/user.png")}
+                    style={{ width: 70, height: 70 }}
+                    resizeMode="contain"
+                  />
+                  <View>
+                    <Text style={styles.username}>{user.userName}</Text>
+                    <Text
+                      onPress={() => openEmail(user.email)}
+                      style={styles.email}
+                    >
+                      {user.email}
+                    </Text>
+                    <Text>{user.contact}</Text>
+                    <Text>{user.issuer}</Text>
+                  </View>
+                  <View style={styles.balanceContainer}>
+                    <MaterialCommunityIcons
+                      name="cash"
+                      size={18}
+                      color={COLORS.white}
+                    />
+                    <Text style={styles.balanceText}>{user.balance}</Text>
+                  </View>
+                </Pressable>
+              ))
+            )}
+          </ScrollView>
+        )}
+      </View>
 
       <Pressable
         onPress={() => {
@@ -49,7 +91,7 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default users;
 
 const styles = StyleSheet.create({
   bg: {
@@ -80,15 +122,38 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: 20,
   },
+  middleContainer: {
+    flex: 1,
+  },
   userCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    backgroundColor: COLORS.white,
+    borderRadius: 8,
     marginBottom: 10,
     padding: 10,
-    backgroundColor: COLORS.white,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+  },
+  username: {
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+    color: COLORS.darkBlue,
+  },
+  email: {},
+  balanceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "absolute",
+    right: 10,
+    top: 10,
+    backgroundColor: COLORS.darkBlue,
+    padding: 3,
+    borderRadius: 5,
+  },
+  balanceText: {
+    color: COLORS.white,
+    fontFamily: FONTS.bold,
+    fontSize: 12,
+    marginLeft: 5,
   },
 });

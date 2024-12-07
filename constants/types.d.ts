@@ -6,12 +6,13 @@ declare interface USER{
     assets?: ASSET[];
 }
 
-declare interface ASSET{
-    id: number;
-    name?: string;
-    value?: number;
-    quantity?: number;
-    date?: Date;
+declare interface Asset {
+  assetId: string;
+  assetName: string;
+  totalSupply: number | string;
+  pricePerShare:number | string;
+  details: string;
+  holders: any[];
 }
 
 

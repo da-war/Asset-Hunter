@@ -11,16 +11,24 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS, SIZES } from "@/constants/theme";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const index = () => {
   const [userName, setUserName] = React.useState("");
   const [pinCode, setPinCode] = React.useState("");
 
-  const handleLogin = () => {
-    console.log("userName", userName);
-    console.log("pinCode", pinCode);
-    Alert.alert("Login", "Login Successful");
-    router.push("/(tabs)/(users)/users");
+  const handleLogin = async () => {
+    if (userName === "" || pinCode === "") {
+      Alert.alert("Credentials Missing", "Please enter correct credentials");
+      return;
+    }
+    if (userName.toLocaleLowerCase() === "admin" && pinCode === "4575") {
+      Alert.alert("Login Success", "You are now logged in as Admin");
+      await AsyncStorage.setItem("isAdmin", "true");
+      router.replace("/settings");
+    } else {
+      Alert.alert("Invalid Credentials", "Please enter correct credentials");
+    }
   };
 
   return (
@@ -37,18 +45,22 @@ const index = () => {
       <View style={styles.middleContainer}>
         <Text style={styles.heading}>User Name</Text>
         <TextInput
-          placeholder="Email"
+          placeholder="Username"
           style={styles.input}
           value={userName}
           onChangeText={(text) => setUserName(text)}
+          autoCorrect={false}
+          autoCapitalize="none"
         />
 
         <Text style={styles.heading}>PinCode</Text>
         <TextInput
-          placeholder="Email"
+          placeholder="Password"
           style={styles.input}
           value={pinCode}
           onChangeText={(text) => setPinCode(text)}
+          autoCorrect={false}
+          autoCapitalize="none"
         />
       </View>
 

@@ -15,19 +15,19 @@ import firestore from "@react-native-firebase/firestore";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { randomString } from "@/utils";
+import { useUserStore } from "@/store/userStore";
 
 const createUser = () => {
-  const [users, setUsers] = useState([]);
   const [userName, setUserName] = useState("");
+  const { users, loading, addUser } = useUserStore(); // Access the store
+
   const [issuer, setIssuer] = useState("");
   const [contact, setContact] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = React.useState(false);
 
   //add user in firestore
 
-  const addUser = async () => {
-    setLoading(true);
+  const addingUser = async () => {
     console.log("hello");
     // Generate a random user ID
     const userId = randomString(20);
@@ -43,33 +43,12 @@ const createUser = () => {
       assets: [],
     };
 
-    console.log("start");
-    await firestore()
-      .collection("users")
-      .doc(userId) // Set the document ID to the random ID
-      .set(user) // Use `.set` to explicitly set the document ID
-      .then(() => {
-        console.log("good");
-        Alert.alert("User Created");
-        setLoading(false); // Fix here: should be false
-        router.push('/(tabs)/(users)/users')
-      })
-      .catch((err) => {
-        console.log("not good", err);
-        Alert.alert("Issue in creating user");
-        setLoading(false);
-      });
+    addUser(user);
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      {loading && (
-        <ActivityIndicator
-          size="large"
-          color={COLORS.white}
-          style={{ position: "absolute", top: "50%", left: "50%" }}
-        />
-      )}
+      {loading && <ActivityIndicator size="large" color={COLORS.white} />}
       <View>
         <Text style={styles.title}>Create User</Text>
 
@@ -114,7 +93,7 @@ const createUser = () => {
           />
         </View>
 
-        <Pressable onPress={() => addUser()} style={styles.btn}>
+        <Pressable onPress={() => addingUser()} style={styles.btn}>
           <Text style={styles.btnText}>Add User</Text>
         </Pressable>
       </View>
