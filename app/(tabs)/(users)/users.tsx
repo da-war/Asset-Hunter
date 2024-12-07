@@ -17,11 +17,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const users = () => {
   const { users, loading, fetchUsers } = useUserStore(); // Access the store
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Fetch users when the component mounts
   useEffect(() => {
-    fetchUsers(); // This fetches the users from Firestore through the store
+    fetchUsers();
   }, [fetchUsers]);
 
   const openEmail = (email: string) => {
@@ -33,13 +31,13 @@ const users = () => {
 
       <View style={styles.middleContainer}>
         {loading ? (
-          <Text>Loading...</Text> // Show loading text while fetching
+          <Text>Loading...</Text>
         ) : (
           <ScrollView
             refreshControl={
               <RefreshControl
                 refreshing={loading}
-                onRefresh={() => fetchUsers()} // Fetch users when the user pulls down to refresh
+                onRefresh={() => fetchUsers()}
               />
             }
           >
@@ -47,7 +45,16 @@ const users = () => {
               <Text>No users found</Text>
             ) : (
               users.map((user, index) => (
-                <Pressable key={index} style={styles.userCard}>
+                <Pressable
+                  onPress={() => {
+                    router.push({
+                      pathname: "/profile",
+                      params: { data: JSON.stringify(user) },
+                    });
+                  }}
+                  key={index}
+                  style={styles.userCard}
+                >
                   <Image
                     source={require("@/assets/icons/user.png")}
                     style={{ width: 70, height: 70 }}
