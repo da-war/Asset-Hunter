@@ -207,5 +207,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: 20,
   },
-  editBox: {},
+  editBox: {
+    backgroundColor: COLORS.darkerGreen,
+  },
 });
