@@ -37,7 +37,6 @@ export const useUserStore = create<UserStore>()(
       addUser: async (user: User) => {
         set({ loading: true });
         try {
-          // Add user to Firestore
           await firestore()
             .collection('users')
             .doc(user.userId)
