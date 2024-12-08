@@ -22,6 +22,7 @@ import {
   BottomSheetModalProvider,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { useUserStore } from "@/store/userStore";
 
 const profile = () => {
   const { data } = useLocalSearchParams();
@@ -33,6 +34,8 @@ const profile = () => {
   const balanceBottomSheet = useRef<BottomSheetModal>(null);
   const [addBalance, setAddBalance] = useState("");
   const [removeBalance, setRemoveBalance] = useState("");
+
+  const { updateUser, fetchUsers } = useUserStore();
 
   const formattedDate = dato.toLocaleDateString("en-GB"); // 'en-GB' for DD/MM/YYYY format
   const formattedTime = dato.toLocaleTimeString("en-GB");
@@ -84,6 +87,28 @@ const profile = () => {
     balanceBottomSheet.current?.dismiss();
   };
 
+  const handleAddBalance = () => {
+    if (!addBalance) {
+      return;
+    }
+
+    const newBalance = parsedData.balance + parseInt(addBalance);
+    updateUser(parsedData.userId, { balance: newBalance });
+    fetchUsers();
+    closeBalanceBottomSheet();
+  };
+
+  const handleRemoveBalance = () => {
+    if (!removeBalance) {
+      return;
+    }
+
+    const newBalance = parsedData.balance - parseInt(removeBalance);
+    updateUser(parsedData.userId, { balance: newBalance });
+    fetchUsers();
+    closeBalanceBottomSheet();
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <Text onPress={() => router.back()} style={styles.backText}>
@@ -110,16 +135,18 @@ const profile = () => {
           <Text style={styles.balance}>{parsedData.balance}</Text>
         </View>
 
-        <TouchableOpacity
-          onPress={openBalanceBottomSheet}
-          style={styles.editBox}
-        >
-          <MaterialCommunityIcons
-            name="pencil"
-            color={COLORS.white}
-            size={16}
-          />
-        </TouchableOpacity>
+        {isAdmin && (
+          <TouchableOpacity
+            onPress={openBalanceBottomSheet}
+            style={styles.editBox}
+          >
+            <MaterialCommunityIcons
+              name="pencil"
+              color={COLORS.white}
+              size={16}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.middleContainer}>
@@ -170,24 +197,27 @@ const profile = () => {
               placeholder="Enter amount"
               keyboardType="numeric"
               style={styles.input}
-              value={addBalance}
-              onChangeText={(text) => handleAddBalance(text)}
+              onChangeText={(text) => setAddBalance(text)}
+              defaultValue={addBalance}
             />
 
-            <Pressable style={styles.button}>
+            <Pressable onPress={handleAddBalance} style={styles.button}>
               <Text style={styles.btnText}>Add Balance</Text>
             </Pressable>
             <Text style={styles.label}>Withdraw Balance</Text>
             <TextInput
               placeholder="Enter amount"
               keyboardType="numeric"
-              style={styles.input}
-              value={removeBalance}
-              onChangeText={(text) => handleRemoveBalance(text)}
+              style={[styles.input]}
+              defaultValue={removeBalance}
+              onChangeText={(text) => setRemoveBalance(text)}
             />
 
-            <Pressable style={styles.button}>
-              <Text style={styles.btnText}>Add Balance</Text>
+            <Pressable
+              onPress={handleRemoveBalance}
+              style={[styles.button, { backgroundColor: "#9a031e" }]}
+            >
+              <Text style={styles.btnText}>Withdraw Balance</Text>
             </Pressable>
           </BottomSheetView>
         </BottomSheetModal>
@@ -325,7 +355,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: COLORS.darkBlue,
+    backgroundColor: "#004b23",
     padding: 10,
     borderRadius: 10,
     marginVertical: 10,
