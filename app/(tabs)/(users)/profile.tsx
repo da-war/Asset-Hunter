@@ -171,7 +171,7 @@ const profile = () => {
               keyboardType="numeric"
               style={styles.input}
               value={addBalance}
-              onChangeText={(text) => setAddBalance(text)}
+              onChangeText={(text) => handleAddBalance(text)}
             />
 
             <Pressable style={styles.button}>
@@ -183,7 +183,7 @@ const profile = () => {
               keyboardType="numeric"
               style={styles.input}
               value={removeBalance}
-              onChangeText={(text) => setRemoveBalance(text)}
+              onChangeText={(text) => handleRemoveBalance(text)}
             />
 
             <Pressable style={styles.button}>
