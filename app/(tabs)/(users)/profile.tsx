@@ -1,11 +1,27 @@
-import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  Button,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+} from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAssetStore } from "@/store/assetStore";
 import { COLORS, FONTS } from "@/constants/theme";
 import { useLocalSearchParams, router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 
 const profile = () => {
   const { data } = useLocalSearchParams();
@@ -13,6 +29,10 @@ const profile = () => {
   const userId = parsedData.userId; // Assuming userId is part of the parsed data
   const date = parsedData.date;
   const dato = new Date(date.seconds * 1000);
+  const [openBalanceSheet, setOpenBalanceSheet] = useState(false);
+  const balanceBottomSheet = useRef<BottomSheetModal>(null);
+  const [addBalance, setAddBalance] = useState("");
+  const [removeBalance, setRemoveBalance] = useState("");
 
   const formattedDate = dato.toLocaleDateString("en-GB"); // 'en-GB' for DD/MM/YYYY format
   const formattedTime = dato.toLocaleTimeString("en-GB");
@@ -35,6 +55,18 @@ const profile = () => {
     setFilteredAssets(filtered);
   };
 
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    balanceBottomSheet.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const handleEditBalance = () => {
+    setOpenBalanceSheet(true);
+  };
+
   useEffect(() => {
     checkIsAdmin();
     fetchAssets();
@@ -43,6 +75,14 @@ const profile = () => {
   useEffect(() => {
     filterAssetsByUserId(); // Filter assets after fetching them
   }, [assets]);
+
+  const openBalanceBottomSheet = () => {
+    balanceBottomSheet.current?.present();
+  };
+
+  const closeBalanceBottomSheet = () => {
+    balanceBottomSheet.current?.dismiss();
+  };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -69,13 +109,17 @@ const profile = () => {
         <View style={styles.balanceCont}>
           <Text style={styles.balance}>{parsedData.balance}</Text>
         </View>
-        <Pressable style={styles.editBox}>
+
+        <TouchableOpacity
+          onPress={openBalanceBottomSheet}
+          style={styles.editBox}
+        >
           <MaterialCommunityIcons
             name="pencil"
             color={COLORS.white}
             size={16}
           />
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.middleContainer}>
@@ -108,6 +152,46 @@ const profile = () => {
           />
         )}
       </View>
+      <BottomSheetModalProvider>
+        <BottomSheetModal
+          snapPoints={["25%", "50%", "90%"]}
+          index={2}
+          ref={balanceBottomSheet}
+          onChange={handleSheetChanges}
+          handleIndicatorStyle={{ backgroundColor: COLORS.darkBlue }}
+          backgroundComponent={({ style }) => (
+            <View style={[style, styles.header]}></View>
+          )}
+        >
+          <BottomSheetView style={styles.contentContainer}>
+            <Text style={styles.transactionHeading}>Transactions</Text>
+            <Text style={styles.label}>Add Balance</Text>
+            <TextInput
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.input}
+              value={addBalance}
+              onChangeText={(text) => setAddBalance(text)}
+            />
+
+            <Pressable style={styles.button}>
+              <Text style={styles.btnText}>Add Balance</Text>
+            </Pressable>
+            <Text style={styles.label}>Withdraw Balance</Text>
+            <TextInput
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.input}
+              value={removeBalance}
+              onChangeText={(text) => setRemoveBalance(text)}
+            />
+
+            <Pressable style={styles.button}>
+              <Text style={styles.btnText}>Add Balance</Text>
+            </Pressable>
+          </BottomSheetView>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };
@@ -209,5 +293,48 @@ const styles = StyleSheet.create({
   },
   editBox: {
     backgroundColor: COLORS.darkerGreen,
+    padding: 5,
+    borderRadius: 20,
+    marginLeft: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: COLORS.lightBlue,
+    marginHorizontal: 20,
+  },
+  header: {
+    backgroundColor: COLORS.lightBlue,
+    borderTopEndRadius: 20,
+    borderTopStartRadius: 20,
+  },
+  input: {
+    backgroundColor: COLORS.white,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  transactionHeading: {
+    color: COLORS.black,
+    fontFamily: FONTS.bold,
+    fontSize: 20,
+    textAlign: "center",
+  },
+  label: {
+    color: COLORS.black,
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: COLORS.darkBlue,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  btnText: {
+    color: COLORS.white,
+    fontFamily: FONTS.bold,
+    fontSize: 16,
   },
 });
