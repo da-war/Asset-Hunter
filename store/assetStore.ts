@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AssetStore {
   assets: Asset[];
+  singleUserAssets: Asset[];
   loading: boolean;
   addAsset: (asset: Asset) => Promise<void>;
   removeAsset: (assetId: string) => Promise<void>;
@@ -13,7 +14,9 @@ interface AssetStore {
     assetId: string,
     updatedFields: Partial<Asset>
   ) => Promise<void>; // Update function
+
   fetchAssets: () => Promise<void>;
+  fetchAssetsByUserId: (userId: string) => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
 
@@ -21,6 +24,7 @@ export const useAssetStore = create<AssetStore>()(
   persist(
     (set) => ({
       assets: [],
+      singleUserAssets: [],
       loading: false,
 
       // Set loading state
@@ -31,7 +35,6 @@ export const useAssetStore = create<AssetStore>()(
         set({ loading: true });
         try {
           await firestore().collection("assets").doc(asset.assetId).set(asset);
-          Alert.alert("Asset Created");
           set((state) => ({
             assets: [...state.assets, asset],
             loading: false,
@@ -74,7 +77,6 @@ export const useAssetStore = create<AssetStore>()(
             ),
             loading: false,
           }));
-          Alert.alert("Asset Updated");
         } catch (err) {
           console.error("Error updating asset:", err);
           Alert.alert("Issue in updating asset");
@@ -92,6 +94,34 @@ export const useAssetStore = create<AssetStore>()(
         } catch (err) {
           console.error("Error fetching assets:", err);
           Alert.alert("Issue in fetching assets");
+          set({ loading: false });
+        }
+      },
+
+      // Fetch assets for a specific user
+      fetchAssetsByUserId: async (userId: string) => {
+        set({ loading: true });
+        try {
+          const snapshot = await firestore()
+            .collection("assets")
+            .where("holders", "array-contains", { userId }) // Query for assets containing the userId in holders
+            .get();
+
+          const fetchedAssets = snapshot.docs.map((doc) => {
+            const data = doc.data() as Asset;
+            return {
+              assetId: data.assetId,
+              assetName: data.assetName,
+              holders: data.holders.filter((holder) => holder.userId === userId),
+              details: data.details,
+              pricePerShare: data.pricePerShare,
+              totalSupply: data.totalSupply,
+            };
+          });
+
+          set({ singleUserAssets: fetchedAssets, loading: false });
+        } catch (err) {
+          console.error("Error fetching assets by user ID:", err);
           set({ loading: false });
         }
       },

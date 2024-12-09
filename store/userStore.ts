@@ -22,6 +22,7 @@ interface UserStore {
   removeUser: (userId: string) => Promise<void>;
   updateUser: (userId: string, updatedFields: Partial<User>) => Promise<void>; // Update function
   fetchUsers: () => Promise<void>;
+  fetchSingleUser: (userId: string) => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
 
@@ -102,6 +103,19 @@ export const useUserStore = create<UserStore>()(
           set({ loading: false });
         }
       },
+      fetchSingleUser: async (userId: string) => {
+        set({ loading: true });
+        try {
+          const snapshot = await firestore().collection('users').doc(userId).get();
+          const fetchedUser = snapshot.data() as User;
+          set({ users: [fetchedUser], loading: false });
+        } catch (err) {
+          console.error('Error fetching users:', err);
+          Alert.alert('Issue in fetching users');
+          set({ loading: false });
+        }
+      }
+      
     }),
     {
       name: 'user-store',

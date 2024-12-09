@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,26 +24,30 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { useUserStore } from "@/store/userStore";
+import { useTransactionStore } from "@/store/transactionStore";
 
 const profile = () => {
   const { data } = useLocalSearchParams();
-  const parsedData = JSON.parse(data);
+  const preData = JSON.parse(data);
+  const [parsedData, setParsedData] = useState(preData);
+  const [dateTime, setDateTime] = useState({});
+  const [balance, setBalance] = useState<number>(parseInt(parsedData.balance));
+
   const userId = parsedData.userId; // Assuming userId is part of the parsed data
-  const date = parsedData.date;
-  const dato = new Date(date.seconds * 1000);
+
   const [openBalanceSheet, setOpenBalanceSheet] = useState(false);
   const balanceBottomSheet = useRef<BottomSheetModal>(null);
   const [addBalance, setAddBalance] = useState("");
   const [removeBalance, setRemoveBalance] = useState("");
 
-  const { updateUser, fetchUsers } = useUserStore();
-
-  const formattedDate = dato.toLocaleDateString("en-GB"); // 'en-GB' for DD/MM/YYYY format
-  const formattedTime = dato.toLocaleTimeString("en-GB");
+  const { updateUser, fetchUsers, fetchSingleUser } = useUserStore();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [filteredAssets, setFilteredAssets] = useState<Asset[]>([]); // State to hold filtered assets
   const { assets, fetchAssets, loading } = useAssetStore();
+
+  const { fetchTransactions, transactions, fetchTransactionsById } =
+    useTransactionStore();
 
   const checkIsAdmin = async () => {
     const isAdmin = await AsyncStorage.getItem("isAdmin");
@@ -57,6 +62,17 @@ const profile = () => {
     );
     setFilteredAssets(filtered);
   };
+
+  const formatDateTime = (date: any) => {
+    const dato = new Date(date.seconds * 1000);
+    const formattedDate = dato.toLocaleDateString("en-GB");
+    const formattedTime = dato.toLocaleTimeString("en-GB");
+    return { formattedDate, formattedTime };
+  };
+
+  const { formattedDate, formattedTime } = formatDateTime(parsedData.date);
+  const [datee, setDatee] = useState(formattedDate);
+  const [timee, setTimee] = useState(formattedTime);
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
@@ -77,6 +93,7 @@ const profile = () => {
 
   useEffect(() => {
     filterAssetsByUserId(); // Filter assets after fetching them
+    fetchTransactionsById(userId);
   }, [assets]);
 
   const openBalanceBottomSheet = () => {
@@ -92,9 +109,11 @@ const profile = () => {
       return;
     }
 
-    const newBalance = parsedData.balance + parseInt(addBalance);
+    const newBalance = balance + parseInt(addBalance);
     updateUser(parsedData.userId, { balance: newBalance });
+    setBalance(newBalance);
     fetchUsers();
+    setAddBalance("");
     closeBalanceBottomSheet();
   };
 
@@ -102,10 +121,16 @@ const profile = () => {
     if (!removeBalance) {
       return;
     }
+    if (balance < parseInt(removeBalance)) {
+      Alert.alert("Insufficient balance");
+      return;
+    }
 
-    const newBalance = parsedData.balance - parseInt(removeBalance);
-    updateUser(parsedData.userId, { balance: newBalance });
+    const newBalance = balance - parseInt(removeBalance);
+    updateUser(parsedData.userId, { balance: parseInt(newBalance) });
+    setBalance(newBalance);
     fetchUsers();
+    setRemoveBalance("");
     closeBalanceBottomSheet();
   };
 
@@ -124,7 +149,7 @@ const profile = () => {
         <View style={styles.horizontalContainer}>
           <Text style={styles.textHeading}>Joined At:</Text>
           <Text style={styles.name}>
-            {formattedDate} ----- {formattedTime}
+            {datee} ----- {timee}
           </Text>
         </View>
       </View>
@@ -132,7 +157,7 @@ const profile = () => {
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceTitle}>Balance</Text>
         <View style={styles.balanceCont}>
-          <Text style={styles.balance}>{parsedData.balance}</Text>
+          <Text style={styles.balance}>{balance}</Text>
         </View>
 
         {isAdmin && (
@@ -152,9 +177,6 @@ const profile = () => {
       <View style={styles.middleContainer}>
         <View style={styles.horizontal}>
           <Text style={styles.assetsTitle}>Assets</Text>
-          <Pressable onPress={() => {}}>
-            <MaterialCommunityIcons name="plus" size={24} color="white" />
-          </Pressable>
         </View>
         {loading ? (
           <Text style={styles.loadingText}>Loading assets...</Text>
@@ -173,11 +195,58 @@ const profile = () => {
                 <Text style={styles.assetDetail}>
                   Price Per Share: {item.pricePerShare}
                 </Text>
+                {/* get item.holders[where id=userId] */}
+                <Text style={styles.assetDetail}>
+                  Your Quantity:{" "}
+                  {
+                    item.holders.find((holder) => holder.userId === userId)
+                      ?.quantity
+                  }
+                </Text>
+
+                <Text style={styles.assetDetail}>Details:{item.details}</Text>
+              </View>
+            )}
+          />
+        )}
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/userAssetManagement",
+              params: { userId: parsedData.userId },
+            })
+          }
+          style={styles.manageAssetBtn}
+        >
+          <Text style={styles.manageAssetText}>Manage Assets</Text>
+        </Pressable>
+
+        <View>
+          <Text style={styles.assetsTitle}>Transactions</Text>
+        </View>
+        {loading ? (
+          <Text style={styles.loadingText}>Loading transactions...</Text>
+        ) : transactions.length === 0 ? (
+          <Text style={styles.noAssetsText}>No assets found.</Text>
+        ) : (
+          <FlatList
+            data={transactions}
+            keyExtractor={(item) => item.transactionId}
+            renderItem={({ item }) => (
+              <View style={styles.assetContainer}>
+                <Text style={styles.assetName}>{item.assetName}</Text>
+                <Text style={styles.assetDetail}>
+                  Total Supply: {item.totalSupply}
+                </Text>
+                <Text style={styles.assetDetail}>
+                  Price Per Share: {item.pricePerShare}
+                </Text>
                 <Text style={styles.assetDetail}>{item.details}</Text>
               </View>
             )}
           />
         )}
+        {/* <TransactionCard /> */}
       </View>
       <BottomSheetModalProvider>
         <BottomSheetModal
@@ -364,6 +433,19 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: COLORS.white,
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+  },
+  manageAssetBtn: {
+    backgroundColor: COLORS.lightBlue,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  manageAssetText: {
+    color: COLORS.darkBlue,
     fontFamily: FONTS.bold,
     fontSize: 16,
   },

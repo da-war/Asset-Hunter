@@ -1,5 +1,5 @@
 declare interface USER{
-    id: number;
+    userId: string;
     username?: string;
     email?: string;
     wallet?: number;
@@ -9,17 +9,20 @@ declare interface USER{
 declare interface Asset {
   assetId: string;
   assetName: string;
-  totalSupply: number | string;
-  pricePerShare:number | string;
+  totalSupply:string;
+  pricePerShare:string;
   details: string;
   holders: any[];
 }
 
 
-declare interface TRANSACTION{
-    id: number;
-    sender?: USER;
-    receiver?: USER;
-    amount?: number;
-    date?: Date;
+declare interface Transaction {
+  transactionId: string;
+  asset: string;
+  quantity: number;
+  from?: string;
+  to?: string;
+  time: Date; // Ensure time is stored as a Date object
+    status: 'pending' | 'completed' | 'cancelled';
+    transactionStakeHolders: string[];
 }

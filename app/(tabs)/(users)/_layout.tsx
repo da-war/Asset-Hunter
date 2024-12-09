@@ -10,6 +10,8 @@ const UserLayout = () => {
       <Stack.Screen name="dashboard" />
       <Stack.Screen name="editUser" />
       <Stack.Screen name="wallet" />
+      <Stack.Screen name="userAssetManagement" />
+      <Stack.Screen name="transactions" />
     </Stack>
   );
 };
