@@ -21,7 +21,7 @@ interface TransactionStore {
 export const useTransactionStore = create<TransactionStore>()(
   persist(
     (set) => ({
-      transactions: {},
+      transactions: [],
       loading: false,
 
       setLoading: (loading: boolean) => set({ loading }),
@@ -94,7 +94,7 @@ export const useTransactionStore = create<TransactionStore>()(
         transactions: [],
         loading: false,
       }));
-      Alert.alert('No transactions found for this user');
+    
     }
   } catch (err) {
     console.error('Error fetching transactions:', err);

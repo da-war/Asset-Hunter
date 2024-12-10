@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Asset Hunter",
-    "slug": "Asset Hunter For Tracking the Investments",
+    "name": "AssetHunter",
+    "slug": "AssetHunter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -50,6 +50,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b439444e-dee0-44d0-a1c2-60ef685b740f"
+      }
     }
   }
 }

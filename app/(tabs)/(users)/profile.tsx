@@ -227,7 +227,7 @@ const profile = () => {
         {loading ? (
           <Text style={styles.loadingText}>Loading transactions...</Text>
         ) : transactions.length === 0 ? (
-          <Text style={styles.noAssetsText}>No assets found.</Text>
+          <Text style={styles.noAssetsText}>No Transaction found.</Text>
         ) : (
           <FlatList
             data={transactions}

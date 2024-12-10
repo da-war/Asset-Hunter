@@ -2,6 +2,9 @@
   "name": "fintech",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=23.2.0"
+  },
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",

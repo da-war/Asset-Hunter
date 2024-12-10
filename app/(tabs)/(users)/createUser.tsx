@@ -38,7 +38,7 @@ const createUser = () => {
       issuer: issuer,
       contact: contact,
       email: email,
-      balance: 0,
+      balance: parseInt("0"),
       date: new Date(),
       assets: [],
     };
